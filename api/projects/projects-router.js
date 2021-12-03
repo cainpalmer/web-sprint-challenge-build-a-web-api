@@ -23,12 +23,12 @@ router.get('/:id', validateProjectId, async (req, res, next) => {
     }
 })
 
-router.post('/', async (req, res) => {
+router.post('/', validateProject, async (req, res) => {
     try {
         const newProject = await Projects.insert({
             name: req.name,
             description: req.description,
-            completed: req.completed
+            completed: req.completed,
         })
         res.status(201).json(newProject)
     } catch(err) {
@@ -36,22 +36,12 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.put('/:id', validateProjectId, validateProject, async (req, res) => {
-    const {name, description, completed} = req.body
-    if (!name || !description || !completed) {
-        res.status(400).json({
-            message: 'the project with this id does not exist'
-        })
-    } else {
-        Projects.update(req.params.id, req.body)
-        .then(() => {
-            return Projects.get(req.params.id)
-        })
-        .then(project => {
-            res.json(project)
-        })
-        .catch(next)
-    }
+router.put('/:id', validateProjectId, validateProject, (req, res, next) => {
+    Projects.update(req.params.id, req.body)
+    .then((project) => {
+        res.status(400).json(projects)
+    })
+    .catch(next)
 })
 
 router.delete('/:id', validateProjectId, async (req, res, next) => {

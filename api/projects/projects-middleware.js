@@ -1,5 +1,6 @@
 
 // Imports
+const e = require('express');
 const Projects = require('./projects-model');
 
 // Middlewares
@@ -10,7 +11,7 @@ async function validateProjectId (req, res, next) {
         const project = await Projects.get(id)
 
         if (project) {
-            req.params = project
+            req.project = project
             next()
         } else {
             res.status(404).json({
@@ -23,20 +24,20 @@ async function validateProjectId (req, res, next) {
 }
 
 async function validateProject (req, res, next) {
-
-    const {name, description, completed} = req.body    
-    
+    const { name, description, completed } = req.body;
     if (!name || !name.trim()) {
         res.status(400).json({
-            message: 'Please input a name'})
-    } else if (!description || !discription.trim()) {
+        message: "missing name field",
+        });
+    } else if (!description || !description.trim()) {
         res.status(400).json({
-            message: 'please input a discription'})
+        message: "missing description field",
+        });
     } else {
-        req.name = name.trim()
-        req.description = description.trim()
-        req.completed = completed
-        next()
+        req.name = name.trim();
+        req.description = description.trim();
+        req.completed = completed;
+        next();
     }
 }
 
