@@ -3,18 +3,15 @@
 const express = require('express');
 const Actions = require('./actions-model');
 const router = express.Router();
-const {validateActionId, validateAction} = require('./actions-middlware');
+const {validateActionId, validateAction, validatePost} = require('./actions-middlware');
 
 // Routers
-router.get('/', async (req, res) => {
-    try {
-
-        const actions = await Actions.get
-
+router.get('/', (req, res, next) => {
+    Actions.get()
+    .then(actions => {
         res.status(200).json(actions)
-    } catch (err) {
-        next (err)
-    }
+    })
+    .catch(next)
 })
 
 router.get('/:id', validateActionId, async (req, res, next) => {
@@ -25,32 +22,18 @@ router.get('/:id', validateActionId, async (req, res, next) => {
     }
 })
 
-router.post('/', async (req, res) => {
-    try {
-        const newAction = await Actions.insert({
-            project_id: req.project_id,
-            description: req.description,
-            notes: req.notes,
-            completed: req.completed
-        })
-        res.status(201).json(newAction)
-    } catch(err) {
-        next(err)
-    }
+router.post('/', validatePost, (req, res, next) => {
+    Actions.insert(req.body)
+    .then(action => {
+        res.status(201).json(action)
+    })
+    .catch(next)
 })
 
-router.put('/:id', validateActionId, validateAction, async (req, res) => {
-    Actions.update(req.params.id, {
-        project_id: req.project_id,
-        description: req.description,
-        notes: req.notes,
-        completed: req.completed
-    })
-    .then(() => {
-        return Action.get(req.params.id)
-    })
+router.put('/:id', validateActionId, validateAction, (req, res, next) => {
+    Actions.update(req.params.id, req.body)
     .then(action => {
-        res.json(action)
+        res.status(200).json(action)
     })
     .catch(next)
 })
