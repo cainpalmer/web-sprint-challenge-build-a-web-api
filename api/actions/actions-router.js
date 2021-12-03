@@ -38,13 +38,12 @@ router.put('/:id', validateActionId, validateAction, (req, res, next) => {
     .catch(next)
 })
 
-router.delete('/:id', validateActionId, async (req, res, next) => {
-    try{
-        await Action.remove(req.params.id)
-        res.json(res.Action)
-    } catch(err) {
-        next(err)
-    }
+router.delete('/:id', validateActionId, (req, res, next) => {
+    Actions.remove(req.params.id)
+    .then(action => {
+        res.json(req.action)
+    })
+    .catch(next)
 })
 
 // Exports
