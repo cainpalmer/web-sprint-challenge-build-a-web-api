@@ -4,7 +4,7 @@ const express = require('express');
 const server = express();
 
 // Routers
-const projectRouter = require('./projects/projects-router');
+const projectsRouter = require('./projects/projects-router');
 const actionsRouter = require('./actions/actions-router');
 
 // Use Server
